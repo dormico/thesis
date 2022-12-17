@@ -1,0 +1,123 @@
+%----------------------------------------------------------------------------
+\chapter{Single Page Application implementation}\label{Ch3}
+%----------------------------------------------------------------------------
+ 
+ In this chapter I will discuss how the user flows we specified in Chapter \ref{Ch1} got implemented. I decided to work with Angular, the frontend framework that I have the most experience with and whose usage with Azure is well documented. My technique was to first create the user interface with mock data and then write the related services, so this is why I talk about them first here as well. 
+ 
+%----------------------------------------------------------------------------
+\section{Userflow implementations}
+%----------------------------------------------------------------------------
+ 
+%----------------------------------------------------------------------------
+\subsection{Anonymous User userflow}
+%----------------------------------------------------------------------------
+
+Previously, in Chapter \ref{AnonUserflow} we declared that users who first open the website should see a list of restaurants with some basic details (see Figure \figref{UIsAnon}) and be able to log in. So the first task was to decide what kind of data should be stored about the restaurants and how to display them in a user-friendly manner. These were implemented in the following files:
+
+Components:
+\begin{itemize}
+	\item \verb+restaurants-list+: Gets the list of restaurants by calling restaurant service's function \verb+getRestaurants()+ and displays them. The items are clickable, therefore the user can navigate through them to the accompanying details page (see image at Appendix \figref{UI_1}).
+	
+	\item \verb+restaurant-details+: Gets the chosen restaurant by its id, calling the restaurant service's \verb+getRestaurantById(id)+ function and displays the restaurant details and its menu. The user can choose to order from the restaurant by clicking \textsc{order here} (see image at Appendix \figref{UI_2}). If the user is not logged in, he will be redirected to the login page and routed back to the order page after login.
+	
+	\item \verb+login+: The login page can be accessed by clicking the \textsc{order here} button at a restaurant's details page or by clicking \textsc{login} at the navbar which is displayed on every page. This is a custom login page to the application, if the user does not have an account yet, he can choose to register either as guest or as restaurant (see image at Appendix \figref{UI_8}).
+\end{itemize}
+Models:
+\begin{itemize}
+	\item \verb+restaurant.type.ts+: Contains the \verb+Restaurant+ interface and other type declarations it uses e.g.\ \verb+MenuItems, Style+ enum.
+	\item \verb+guest.type.ts+: The \verb+Guest+ interface is declared here, which is the interpretation of any logged in user. Guests and restaurants are distinguished by the \verb+restaurant+ attribute, which contains the restaurant id, if the user is a restaurant, otherwise it contains just an empty string.
+\end{itemize}
+Services:
+\begin{itemize}
+	\item \verb+restaurant.service.ts+: This service collects its data from the restaurant microservice, which will be discussed later in Section \ref{RestaurantMicroservice}. I will only mention the two functions we previously touched on:
+	\begin{itemize}
+		\item\verb+getRestaurants()+: The function calls the microservice with a get request and passes the result to the caller as an \verb+Observable+ object.
+		\item\verb+getRestaurantById(id)+: This function acts the same way, except the request returns a single restaurant object instead of a list.
+	\end{itemize}	
+	\item \verb+auth.service.ts+: This service handles user login and logout and manages registrations. 
+\end{itemize}
+
+%----------------------------------------------------------------------------
+\subsection{Guest userflow}
+%----------------------------------------------------------------------------
+
+Let's remember the requirements we set for the guest userflow (see Figure \figref{UIsGuest}). Here I mainly tried to accomplish two things: display a part of the restaurant data that is relevant for the ordering process and collect the guest's order details and send them to the database for further use. The main logic can be found in the following files:
+
+Components:
+\begin{itemize}	
+	\item \verb+new-guest+: This is a very basic registration form, it collects the user's email, password and a display name.
+	\item \verb+table-reservation+: This is the component where the order begins, the guest can decide to order takeaway and provide information about when he will arrive. If the order is eaten at the place, the user can reserve one or more tables for a given time interval on a tile map (see image at Appendix \figref{UI_4}). At the table selection map the tables are clickable and green-coloured if they are free at the order time, otherwise they are grey and non-clickable. They can also be chosen or removed at the side list. If the guest types in the required data, he can navigate to the menu or back to the details page. 
+	\item \verb+menu+: The component lists the current restaurant's menu items, displays basic data about them and allows the guest to select the wished amount of dishes. The user can navigate to the cart component. See image at Appendix \figref{UI_5}
+	\item \verb+cart+: The cart component summarises and displays all of the collected order data for the guest to revise it (see image at Appendix \figref{UI_3}). Changes at the amount of the dishes can be made here. If the user removes all the dishes, he will be directed back to the menu page. The user can navigate back to order more or accept and proceed to payment. In this case the component calls the cart service's \verb+saveOrder()+ function to send the order data to the corresponding services.
+	\item \verb+payment+: The payment component displays a confirmatory text about a hypothetic successful payment, the actual money transfer is not implemented. If the user navigates here, two e-mails going to be sent to his inbox via the email service with the payment- and order details (see image at Appendix \figref{UI_7}).
+	\item \verb+feedback-form+: After successfully submitting an order, the guest has the option to give feedback about the restaurant. The form asks the guest to score the restaurant on a 1 - 5 scale, write a review and share his satisfaction with further aspects of the restaurant (see image at Appendix \figref{UI_14}). This rating then will be saved and affect the restaurant's rating and the review text will appear on the restaurant's details page. In a real life event this user feedback should be collected only after the expiration of the order's date, but for the sake of understanding I made it accessible here.
+\end{itemize}
+Models:
+\begin{itemize}
+	\item \verb+restaurant.type.ts+: See above.
+	\item \verb+email.type.ts+: Contains two email interfaces, \verb+InvoiceEmail+ and \verb+OrderEmail+. These are the collections of data that should be sent to the guest after order. 
+	\item \verb+feedback.type.ts+: The interface that describes the guest's review.
+\end{itemize}
+Services:
+\begin{itemize}
+	\item \verb+restaurant.service.ts+: See above.
+	\item \verb+cart.service.ts+: All of the orders collected data is handled by the cart service. When a user finishes the order process with payment, the cart service passes the order on to the order service.
+	\item \verb+email.service.ts+: This service communicates with the email microservice (discussed later at Section \ref{EmailMicroservice}). Separately collects and sends the order and payment data, that will be displayed in the e-mails.
+	\item \verb+review.service.ts+: Sends user reviews to the review microservice (see at Section \ref{ReviewMicroservice}).
+	\item \verb+order.service.ts+: This service communicates with order microservice (see at Section \ref{OrderMicroservice}). It consists of the following functions:
+	\begin{itemize}
+		\item\verb+addOrder(order)+ function posts the guest's order to the microservice.
+		\item\verb+getOrders(rId)+ (See at Restaurant userflow \ref{RestaurantUserflow})
+		\item\verb+getOrdersToday(rId, date)+ (See at Restaurant userflow  \ref{RestaurantUserflow})
+	\end{itemize}
+\end{itemize}
+
+%----------------------------------------------------------------------------
+\subsection{Restaurant userflow}\label{RestaurantUserflow}
+%----------------------------------------------------------------------------
+ 
+ The restaurant userflow should meet the requirements discussed in Section \ref{RestaurantUserflow} (also see Figure \figref{UIsRestaurant}). The following files contain the main logic of the userflow:
+ 
+Components:
+\begin{itemize}	
+	\item \verb+edit-details+: This is the first component of the restaurant registration process and can be reached by clicking \textsc{new restaurant} on the login page.  It is a form where the new restaurant's basic details can be added. See image here: \figref{UI_9}
+	\item \verb+edit-menu+:	The new restaurant user can add and remove menu items and save them or decide to make these setting later (see image at Appendix \figref{UI_10}). Empty dishes won't be saved.
+	\item \verb+reservation-map+: This is the component where the user can edit a map of the restaurant's tables' layout. The map can have a name (in case later a restaurant could have more than one maps) and a photo can be uploaded of the room which the map portrays. The tile map itself can only be square shaped and the resolution can be between 5x5 and 17x17 (only odd numbers). Each tile displays empty floor by default and by clicking them the image changes to a table or other item, that's location could affect a guest's table choice e.g.\ windows, food bar, toilets. If the tile displays a table then a seat number setting option appears on the right side of the map (see image at Appendix \figref{UI_11}). The user can choose to set it up later. By saving the map the new restaurant account is created and the user is directed to the login page. 
+	\item \verb+dashboard+: When a user logs in to a restaurant account the dashboard component shows up. It contains the following:
+	\begin{itemize}
+		\item The restaurant's basic data and links to modifications.
+		\item New orders shortlist with the three most recent order. By clicking \textsc{see all} the whole list can be viewed at a separate page.
+		\item The orders for that day (if there is any).
+		\item The reviews the guests wrote about the restaurant in the feedback form. The restaurant can write a reply if it haven't done so yet. This will appear on the restaurant's details page.
+	\end{itemize}
+The user can navigate back to the dashboard from anywhere by clicking the \textsc{Allegro} icon on the navbar.
+	\item \verb+incoming-orders+: Displays the whole incoming orders list.
+\end{itemize}
+Models:
+\begin{itemize}
+	\item \verb+restaurant.type.ts+: See above.
+	\item \verb+order.type.ts+: See above.
+\end{itemize}
+Services:
+\begin{itemize}
+	\item \verb+auth.service.ts+: See above.
+	\item \verb+restaurant-admin.service.ts+: Handles the modifications that are made on a restaurant. Its most important function is \verb+addRestaurant(restaurant)+, which posts a new restaurant's JSON to the restaurant microservice and if it's successfully created, calls auth service to create a new user with the received restaurant id.
+	\item \verb+order.service.ts+: Two of order service's functions are relevant here.
+	\begin{itemize}
+		\item\verb+getOrders(rId)+: Fetches the given restaurant's orders' list from order microservice.
+		\item\verb+getOrdersToday(rId, date)+: Gets the restaurant's orders from order microservice, whose booking day equals the day given in the parameter.
+	\end{itemize}
+	\item \verb+review.service.ts+: Its \verb+addAnswer(review, rId)+ function appends the restaurant's reply to an existing guest review. 
+\end{itemize}
+
+%----------------------------------------------------------------------------
+\section{Serverless components}
+%----------------------------------------------------------------------------
+%----------------------------------------------------------------------------
+\subsection{Setting up Azure Static Web Apps}
+%----------------------------------------------------------------------------
+As we have seen it in the previous chapter, to accomplish a serverless frontend, we will publish our app to Azure Static Web Apps. As it has a pretty easy-to-follow tutorial, I won't go into the step-by-step details of how to deploy a web app. There are more ways to go about it, I started out with a GitHub repository and followed the tutorials about creating a new static web app with angular \cite{SWADeploy}, adding an API \cite{SWAAddAPI} and connecting it to a function app \cite{SWAAddFuncApp}. Accomplishing the tutorials will result in a publicly available app. (Mine is available here: \ref{StaticWebAppLink}.) This tutorial does not include the routing configuration of the application, which by default can cause the problem that after reloading a page, the app will return error 404. This can be solved by creating a \emph{staticwebapp.config.json} file in the route folder and adding a navigation fallback (see full solution here: \cite{SWAConfig}). An other thing to pay attention to is deploying the local modifications to the web app manually. It is not too complicated in VS Code, but it's even simpler, if we automate the process with GitHub Actions.
+%----------------------------------------------------------------------------
+\subsection{Continuous Deployment with GitHub Actions}
+%---------------------------------------------------------------------------- 
+I created a CI/CD workflow with GitHub Actions. \cite{CI/CDGitHubActions} This way every time I push the app to GitHub, it will try to automatically deploy it to Static Web Apps. This can be configured via an yml file placed in the project's \verb+.github+ folder. My finished yml file can be visited at \ref{GitHubActionsYml}.

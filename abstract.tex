@@ -1,0 +1,20 @@
+%----------------------------------------------------------------------------
+% Abstract in hungarian
+%----------------------------------------------------------------------------
+\chapter*{Kivonat}\addcontentsline{toc}{chapter}{Kivonat}
+
+Szakdolgozatom célja egy éttermi foglaló rendszert megvalósító serverless alkalmazás implementálása volt valamely felhőszolgáltó erőforrásainak felhasználásával. Továbbá megkíséreltem felmérni, hogy egy serverless alkalmazás teljesítménye és fejlesztői élménye összemérhető-e a hagyományos megközelítésével. Ehhez a Microsoft Azure felhőjét, ezen belül kliensoldalon az Azure Static Web Apps szolgáltatást használtam Angular keretrendszerrel, Azure Function Appot szerveroldalon és Cosmos DB-t az alkalmazás adatainak tárolására. A kész alkalmazáson terheléses tesztet végeztem, amelynek eredményei arra engedtek következtetni, hogy az alkalmazás a lekérdezések mennyiségének megfelelően skálázódik, alátámasztva ezzel azt a feltevést, hogy a szerverek kezelését a serverless rendszer önmaga megoldja.
+Végül kiértékeltem a megoldást és arra a következtetésre jutottam, hogy a serverless megközelítés a programozó eszköztárának hasznos részét képezi. 
+\vfill
+
+%----------------------------------------------------------------------------
+% Abstract in english
+%----------------------------------------------------------------------------
+\chapter*{Abstract}\addcontentsline{toc}{chapter}{Abstract}
+
+In this thesis I aimed to implement a serverless application on a cloud provider's service, which accomplishes a restaurant reservation system. I also attempted to measure whether a serverless app's performance and coding experience can be as good as the conventional approach. 
+For this, I used Microsoft's Azure cloud, more precisely Azure Static Web Apps with Angular framework on the frontend, Azure Function Apps on the server side and Cosmos DB as data storage.
+I did loadtesting on the finished application and the results showed that it scaled according to the request volume, meaning it indeed has the advantage of removing the need to manually manage servers.
+Finally, I evaluated the solution and came to the conclusion that serverless is a useful approach, which has it's place in a programmer's toolbox.
+\vfill
+

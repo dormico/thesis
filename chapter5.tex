@@ -1,0 +1,23 @@
+%----------------------------------------------------------------------------
+\chapter{Challenges and possible extensions}\label{Ch5}
+%----------------------------------------------------------------------------
+
+This is the application I could accomplish in the given time frame. Obviously it's not the best or most ideal solution to this problem. I will list a few things I would do differently next time or should be improved.
+
+\begin{itemize}
+	\item The user login would not be an acceptable solution in a real life environment. It is always a good idea to use an already existing and thoroughly tested service as Azure Active Directory. Instead of the hand written login, AD B2C should be introduced to this application.
+	
+	\item I should give more thought to the database structure and reshape it, if it turns out to be cumbersome to work with.
+	
+	\item Currently users can't delete anything from the database. Restaurants, orders and reviews should have a delete option.
+\end{itemize}
+
+Things that could be added to enhance the user experience:
+
+\begin{itemize}
+	\item At registration the restaurant users should get some feedback, that the registration was successful. Azure AD would solve this problem as well.
+	
+	\item Users could have a profile, which they could modify, maybe collect points or discounts if they use the app consistently.
+	
+	\item The feedback should be collected from the users after they actually went to the restaurant. This could be done via a timed email or if they would have a profile with the restaurants they can write a review for.
+\end{itemize}
