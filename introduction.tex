@@ -17,24 +17,24 @@ Finally, SaaS means one can connect to and use a software without local installa
 
 These categories are not comprehensive, there are others as well, but I would like to mention just one more.
 \begin{itemize}
-	\item Function-as-a-Service (FaaS)~\cite{FaaS}
+	\item Function-as-a-Service (FaaS)~\cite{FaaS}.
 \end{itemize}
 In this case the developer deploys the code to the service, which will run it automatically, when called.  
 
-Serverless is a more abstract version of PaaS~\cite{ServerlessDef}. Here the users have the opportunity to flexibly use a provider's resources and only paying for the amount that was really in use. If there is a greater demand for the resources, e.g.\ on a Black Friday sale, when a lot more people would like to access the user's website, then the resources scale automatically, so there will be no service outage. Providers also guarantee threat prevention and detection technologies. The name suggests that we don't need to own a server: we will use the ones of the provider.
+Serverless is a more abstract version of PaaS~\cite{ServerlessDef}. Here the users have the opportunity to flexibly use a provider's resources and only paying for the amount that was really in use. If there is a greater demand for the resources, e.g.\ on a Black Friday sale, when a lot more people would like to access the user's website then the resources scale automatically, this way there will be no service outage. Providers also guarantee threat prevention and detection technologies. The name suggests that we don't need to own a server: we will use the ones of the provider.
 
-One can argue that with these solutions the user only gets a limited amount of configuration options and can not peek into the actual code of the used software. These are valid observations and businesses should think about on what level are they willing to rely on a cloud provider. However they also result in more reliable and a lot more flexible services, which can spare a headache and even money for the businesses who decide to use them.
+One can argue that with these solutions the user only gets a limited amount of configuration options and can not peek into the actual code of the used software. These are valid observations and businesses should think about on what level are they willing to rely on a cloud provider. However, they also result in more reliable and a lot more flexible services, which can spare a headache and even money for the businesses who decide to use them.
 
 Why did we mention all of this? Because these are the solutions that were used in this project.
 
 My thesis' goal was to develop a reservation platform for restaurants, where these restaurants can be registered so guests can find them, order food and book tables for a chosen time slot. 
-This problem could have been solved without the serverless approach, but I decided on it because of multiple reasons. The user amount can be very volatile. First of all because it is a self-registration system, so as it would be more and more known the more users would want to register and use the platform simultaneously. Secondly, because the mood and possibility for eating out may rapidly change as we have seen in the previous years. Just between weekdays and weekends or holidays the demand of eating out can vary greatly. In this aspect, a serverless solution can help us out. Last but not least, I wanted to try and learn a new approach.
+This problem could have been solved without the serverless approach, but I decided on it because of multiple reasons. Firstly, because it is a self-registration system, so as it would be more and more known the more users would want to register and use the platform simultaneously. Secondly, because the mood and possibility for eating out may rapidly change as we have seen in the previous years. Just between weekdays and weekends or holidays the demand of eating out can vary greatly. In this aspect, a serverless solution can help us out. Last but not least, I wanted to try and learn a new approach.
 
 The structure of this thesis will be the following: 
  \begin{itemize}
  	\item Chapter \ref{Introduction}: Introduction
-	\item Chapter \ref{Ch1}: Here I will analyze the software requirements. 
-	\item Chapter \ref{Ch2}: We will look at our software architecture options.
+	\item Chapter \ref{Ch1}: Here I analyze the software requirements. 
+	\item Chapter \ref{Ch2}: We explore the software architecture options.
 	\item Chapter \ref{Ch3}: We discuss the created user interface and the frontend of the application.
 	\item Chapter \ref{Ch4}: I write in detail about the used Azure components.
 	\item Chapter \ref{Ch5}: I talk about how the solution could be improved.
